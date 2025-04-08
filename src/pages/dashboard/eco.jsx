@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
   Typography,
   Card,
@@ -9,6 +9,8 @@ import DoughnutChartAccess from "@/components/charts/DoughnutChartAccess";
 import { useAccessReportData } from "@/hooks/useAccessReportData";
 import CatracasTable from "@/components/tables/CatracasTable";
 import UsersTable from "@/components/tables/UsersTable";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export function Eco() {
   const {
@@ -18,63 +20,44 @@ export function Eco() {
     chartData,
     catracasData,
     usuariosData,
+    setSelectedUser,
+    setSelectedCatraca,
+    clearSelection,
+    lastUpdated,
   } = useAccessReportData("http://localhost:5000/dados-eco");
-
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedCatraca, setSelectedCatraca] = useState(null);
 
   const handleUserClick = (userName) => {
     setSelectedUser(userName);
     setSelectedCatraca(null);
-
-    const newData = rawData.filter((item) => {
-      const nome = `${item.MIDNAME || ""} ${item.LASTNAME || ""}`.trim();
-      return nome === userName;
-    });
-
-    setFilteredData(newData);
   };
 
   const handleCatracaClick = (reader) => {
     setSelectedCatraca(reader);
     setSelectedUser(null);
-
-    const newData = rawData.filter((item) => item.READERDESC === reader);
-    setFilteredData(newData);
   };
-
-  const clearSelection = () => {
-    setSelectedUser(null);
-    setSelectedCatraca(null);
-    setFilteredData(rawData);
-  };
-
 
   useEffect(() => {
-    const clickOutside = (e) => {
-      const target = e.target;
-  
-      const isClickInsideTable = target.closest("table");
-      const isCheckbox = target.tagName === "INPUT";
-  
-      if (!isClickInsideTable && !isCheckbox) {
-        if (selectedUser || selectedCatraca) {
-          setSelectedUser(null);
-          setSelectedCatraca(null);
-          setFilteredData(rawData); 
-        }
+    const handleClickOutside = (e) => {
+      const clickedInsideTable = e.target.closest("table") || e.target.tagName === "INPUT";
+      if (!clickedInsideTable) {
+        clearSelection();
       }
     };
-  
-    document.addEventListener("click", clickOutside);
-    return () => document.removeEventListener("click", clickOutside);
-  }, [rawData, selectedUser, selectedCatraca]);
-  
+
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [clearSelection]);
 
   const cards = useStatisticsCardsData("eco");
 
   return (
     <div className="mt-4 w-full px-4">
+      <Typography variant="small" className="text-right text-blue-gray-500 mb-2">
+        Última atualização:{" "}
+        {lastUpdated
+          ? format(lastUpdated, "dd/MM/yyyy HH:mm:ss", { locale: ptBR })
+          : "Carregando..."}
+      </Typography>
       {/* KPIs Cards */}
       <div className="mb-6 grid gap-y-10 gap-x-6 md:grid-cols-2 xl:grid-cols-3">
         {cards.map(({ title, value, footer, color, icon: Icon }, index) => (
@@ -82,7 +65,7 @@ export function Eco() {
             key={index}
             title={title}
             value={value}
-            icon={<Icon className="h-6 w-6 text-blue-500" />} // Corrigido
+            icon={<Icon className="h-6 w-6 text-blue-500" />}
             color={color}
             footer={
               <Typography
@@ -119,7 +102,6 @@ export function Eco() {
             <CatracasTable
               data={catracasData}
               onRowClick={handleCatracaClick}
-              selectedReader={selectedCatraca}
             />
           </Card>
 
@@ -130,7 +112,6 @@ export function Eco() {
             <UsersTable
               data={usuariosData}
               onRowClick={handleUserClick}
-              selectedUser={selectedUser}
             />
           </Card>
         </div>

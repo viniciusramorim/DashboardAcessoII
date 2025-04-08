@@ -36,7 +36,7 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Rota para consultar a view
+//Rota para consultar a view
 app.get('/dados-eco', async (req, res) => {
   const apiKey = req.query.key;
 
@@ -142,6 +142,82 @@ WHERE LASTNAME IS NOT NULL
     res.status(500).send('Erro ao consultar os dados');
 }
 });
+
+// app.get("/dados-mock", (req, res) => {
+//   const dadosFicticios = [
+//     {
+//       DT_EVENT: "2024-12-05T00:00:00.000Z",
+//       EVENT_TIME: "2024-12-05T00:02:33.000Z",
+//       EMPID: 59944,
+//       LASTNAME: "BEATRIZ HELENA BILIA DE BRITO",
+//       FIRSTNAME: "41361421886",
+//       MIDNAME: "156000",
+//       SSNO: "413614218",
+//       NAME: "SP-ECO-TBRA-4A-SEDE-CMC-3300-2",
+//       CARDNUM: "413614218",
+//       DEVID: 16,
+//       EVTDESCR: "Acesso Negado",
+//       EVDESCR: "Crachá Inválido",
+//       MACHINE: 2002,
+//       READERDESC: "SP-ECO-TBRA-TERREO-RECEPCAO-CATRACA 4 ZONA BAIXA-S",
+//       IM_DT_UPDATE: "2024-12-05T15:59:05.710Z"
+//     },
+//     {
+//       DT_EVENT: "2024-12-05T00:00:00.000Z",
+//       EVENT_TIME: "2024-12-05T00:03:12.000Z",
+//       EMPID: 54302,
+//       LASTNAME: "WESLEI ROCHA DOS SANTOS",
+//       FIRSTNAME: "35467094890",
+//       MIDNAME: "80521805",
+//       SSNO: "354670948",
+//       NAME: "SP-ECO-TBRA-15A-SEDE-SHAFT-3300",
+//       CARDNUM: "354670948",
+//       DEVID: 3,
+//       EVTDESCR: "Acesso Negado",
+//       EVDESCR: "Crachá Inválido",
+//       MACHINE: 2005,
+//       READERDESC: "SP-ECO-TBRA-19A-ZONA ALTA-HALL LADO B-E",
+//       IM_DT_UPDATE: "2024-12-05T15:59:05.710Z"
+//     },
+//     {
+//       DT_EVENT: "2024-12-05T00:00:00.000Z",
+//       EVENT_TIME: "2024-12-05T00:04:00.000Z",
+//       EMPID: 49891,
+//       LASTNAME: "DANIEL DE PAULA UBEDA LIMA",
+//       FIRSTNAME: "34100666837",
+//       MIDNAME: "115751",
+//       SSNO: "341006668",
+//       NAME: "SP-ECO-TBRA-15A-SEDE-SHAFT-3300",
+//       CARDNUM: "341006668",
+//       DEVID: 18,
+//       EVTDESCR: "Acesso Negado",
+//       EVDESCR: "Crachá Inativo",
+//       MACHINE: 2005,
+//       READERDESC: "SP-ECO-TBRA-21A-ZONA ALTA-HALL LADO B-sS",
+//       IM_DT_UPDATE: "2024-12-05T15:59:05.710Z"
+//     },
+//     {
+//       DT_EVENT: "2024-12-05T00:00:00.000Z",
+//       EVENT_TIME: "2024-12-05T00:04:00.000Z",
+//       EMPID: 419891,
+//       LASTNAME: "Koao DE PAULA UBEDA LIMA",
+//       FIRSTNAME: "34100666837",
+//       MIDNAME: "115751",
+//       SSNO: "341006668",
+//       NAME: "SP-ECO-TBRA-15A-SEDE-SHAFT-3300",
+//       CARDNUM: "341006668",
+//       DEVID: 118,
+//       EVTDESCR: "Acesso Negado",
+//       EVDESCR: "Crachá Inativo",
+//       MACHINE: 20015,
+//       READERDESC: "SP-ECO-TBRA-21A-ZONA ALTA-HALL LADO B-S",
+//       IM_DT_UPDATE: "2024-12-05T15:59:05.710Z"
+//     },
+    
+//   ];
+
+//   res.json(dadosFicticios);
+// });
 
 app.listen(port, () => {
 console.log(`Servidor rodando em http://localhost:${port}`);

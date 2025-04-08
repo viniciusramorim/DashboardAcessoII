@@ -7,7 +7,6 @@ import {
   RectangleStackIcon,
 } from "@heroicons/react/24/solid";
 import { Home, Profile, Tables, Notifications } from "@/pages/dashboard";
-import { SignIn, SignUp } from "@/pages/auth";
 import Eco from "./pages/dashboard/eco";
 import Chucri from "./pages/dashboard/chucri";
 

@@ -1,23 +1,46 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export function useAccessReportData(apiUrl: string) {
   const [rawData, setRawData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
+  const [selectedCatraca, setSelectedCatraca] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`${apiUrl}?key=minha-chave`);
+      const data = await res.json();
+
+      if (!Array.isArray(data)) return;
+
+      setRawData(data);
+      setLastUpdated(new Date());
+
+      // Aplica o filtro se estiver ativo
+      if (selectedUser) {
+        const nome = selectedUser.trim();
+        const filtrado = data.filter((item) => {
+          const fullName = `${item.MIDNAME || ""} ${item.LASTNAME || ""}`.trim();
+          return fullName === nome;
+        });
+        setFilteredData(filtrado);
+      } else if (selectedCatraca) {
+        const filtrado = data.filter((item) => item.READERDESC === selectedCatraca);
+        setFilteredData(filtrado);
+      } else {
+        setFilteredData(data);
+      }
+    } catch (err) {
+      console.error("Erro ao buscar dados:", err);
+    }
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch(`${apiUrl}?key=minha-chave`);
-        const data = await res.json();
-        setRawData(data);
-        setFilteredData(data);
-      } catch (err) {
-        console.error("Erro ao buscar dados:", err);
-      }
-    }
-
-    fetchData();
-  }, [apiUrl]);
+    fetchData(); // inicial
+    const interval = setInterval(() => fetchData(), 60000); // a cada 1 min
+    return () => clearInterval(interval);
+  }, [apiUrl, selectedUser, selectedCatraca]);
 
   function processChartData(data) {
     const uniqueAccess = new Set();
@@ -70,7 +93,6 @@ export function useAccessReportData(apiUrl: string) {
 
     data.forEach((item) => {
       const nome = `${item.MIDNAME || ""} ${item.LASTNAME || ""}`.trim();
-
       const isError =
         item.EVDESCR?.toLowerCase().includes("negado") ||
         item.EVDESCR?.toLowerCase().includes("inativo") ||
@@ -95,5 +117,13 @@ export function useAccessReportData(apiUrl: string) {
     chartData,
     catracasData,
     usuariosData,
+    setSelectedUser,
+    setSelectedCatraca,
+    clearSelection: () => {
+      setSelectedUser(null);
+      setSelectedCatraca(null);
+      setFilteredData(rawData);
+    },
+    lastUpdated,
   };
 }
